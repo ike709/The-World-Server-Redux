@@ -199,6 +199,9 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 					return
 				src.client.admin_ghost()
 		else
+			src << "<span class='warning'>Ghosting has been disabled on this server, please use the cryogenics to spawn as a new character.</span>"
+
+/**
 			response = alert(src, "Are you -sure- you want to ghost?\n(You are alive, or otherwise have the potential to become alive. If you ghost, you won't be able to play this round until you respawn as a new character! You can't change your mind so choose wisely!)", "Are you sure you want to ghost?", "Ghost", "Stay in body")
 		if(response != "Ghost")
 			return
@@ -213,7 +216,7 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 		if(ghost)
 			ghost.timeofdeath = world.time 	// Because the living mob won't have a time of death and we want the respawn timer to work properly.
 			announce_ghost_joinleave(ghost)
-
+*//
 /mob/observer/dead/can_use_hands()	return 0
 /mob/observer/dead/is_active()		return 0
 
