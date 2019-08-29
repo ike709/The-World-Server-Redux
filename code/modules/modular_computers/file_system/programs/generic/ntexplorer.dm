@@ -103,7 +103,9 @@
 		. = 1
 		fetch_website_data()
 
-
+/*
 	if(href_list["Register"])
 		. = 1
 		if(interactive_website == "forum")
+
+*/

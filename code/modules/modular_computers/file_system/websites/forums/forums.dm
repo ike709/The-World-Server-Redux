@@ -25,7 +25,7 @@
 	var/email
 	var/uid
 
-//	var/avatars								//I guess photos can be used? In future, maybe?
+	var/icon/avatar								//I guess photos can be used? In future, maybe?
 	var/banned = FALSE						// Whether the account is banned by the admins.
 
 	var/member_ckey							// So actual admins can keep track of things.
