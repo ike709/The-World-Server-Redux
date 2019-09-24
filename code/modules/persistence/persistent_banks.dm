@@ -12,9 +12,3 @@
 
 	return 1
 
-
-/datum/money_account/proc/make_persistent()
-	var/path = "data/persistent/bank_accounts/[account_number].sav"
-	if(fexists(path))		return 0
-
-	var/savefile/S = new /savefile(path)
