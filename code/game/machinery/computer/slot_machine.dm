@@ -61,7 +61,7 @@
 	return get_item_cost()
 
 /obj/machinery/computer/slot_machine/get_item_cost()
-	return spin_cost
+	return ( spin_cost + post_tax_cost() )
 
 /obj/machinery/computer/slot_machine/get_tax()
 	return GAMBLING_TAX
@@ -281,38 +281,54 @@
 /obj/machinery/computer/slot_machine/attack_hand(mob/user as mob)
 	if(..())
 		return
-
-	if(!istype(user, /mob/living/silicon))
-		if(user.a_intent == I_HURT)
-			hit_animation()
-			visible_message("<span class='danger'>[usr] aggressively kicks the [src] in pure frustration!</span>")
-
-			playsound(user.loc, 'sound/weapons/gunshot4.ogg', 50, 1)
-			add_fingerprint(user)
-			return
-		else
-			user.set_machine(src)
-
-			var/dat = {"<h4><center>Current Jackpot: <b>[our_money_account ? "$[num2septext(our_money_account.money)]" : "---ERROR---"]</b></center></h4><br>"}
-
-			if(stored_money > 0)
-				dat += {"There are <span style="color:[stored_money<get_spin_cost()?"red":"green"]"><b>$[num2septext(stored_money)]</b>
-					space credits insterted. <span style="color:blue"><a href='?src=\ref[src];reclaim=1'>Reclaim</a></span><br>"}
-			else
-				dat += {"You need at least <b>$[get_spin_cost()]</b> credits to play. Use a nearby ATM and retreive some cash from your money account!<br>"}
-
-			if(can_play())
-				if(stored_money >= get_spin_cost())
-					dat += {"<span style="color:yellow"><a href='?src=\ref[src];spin=1'>Play! (<b>$[get_spin_cost()]</b>)</a></span><br>"}
+	
+	var/dat
+	var/obj/item/weapon/card/id/I = user.GetIdCard()
+	
+	if(I && if(isnum(I.age))
+		if(persistent_economy)
+			if(persistent_economy.gambling_age > I.age)
+				dat = "Under the current government law, the minimum gambling age is
+				\ <b>[persistent_economy.gambling_age]</b>.You will not be able to use this game at this time."
+			
 
 			else
-				dat += {"<b>OUT OF SERVICE</b><br>"}
+				if(!istype(user, /mob/living/silicon))
+					if(user.a_intent == I_HURT)
+						hit_animation()
+						visible_message("<span class='danger'>[usr] aggressively kicks the [src] in pure frustration!</span>")
 
-			var/datum/browser/popup = new(user, "slotmachine", "[src]", 500, 300, src)
-			popup.set_content(dat)
-			popup.open()
+						playsound(user.loc, 'sound/weapons/gunshot4.ogg', 50, 1)
+						add_fingerprint(user)
+						return
+					else
+						user.set_machine(src)
 
-			onclose(user, "slotmachine")
+						dat = {"<h4><center>Current Jackpot: <b>[our_money_account ? "$[num2septext(our_money_account.money)]" : "---ERROR---"]</b></center></h4><br>"}
+
+						if(stored_money > 0)
+							dat += {"There are <span style="color:[stored_money<get_spin_cost()?"red":"green"]"><b>$[num2septext(stored_money)]</b>
+								space credits insterted. <span style="color:blue"><a href='?src=\ref[src];reclaim=1'>Reclaim</a></span><br>"}
+						else
+							dat += {"You need at least <b>$[get_spin_cost()]</b> credits to play. Use a nearby ATM and retreive some cash from your money account!<br>"}
+
+						if(can_play())
+							if(stored_money >= get_spin_cost())
+								dat += {"<span style="color:yellow"><a href='?src=\ref[src];spin=1'>Play! (<b>$[get_spin_cost()]</b>)</a></span><br>"}
+
+						else
+							dat += {"<b>OUT OF SERVICE</b><br>"}
+
+
+	else 
+		dat = "You need an ID to verify your identity before playing this game."	
+			
+
+	var/datum/browser/popup = new(user, "slotmachine", "[src]", 500, 300, src)
+	popup.set_content(dat)
+	popup.open()
+
+	onclose(user, "slotmachine")
 
 
 
