@@ -285,7 +285,7 @@
 	var/dat
 	var/obj/item/weapon/card/id/I = user.GetIdCard()
 	
-	if(I && if(isnum(I.age))
+	if(I && isnum(I.age))
 		if(persistent_economy)
 			if(persistent_economy.gambling_age > I.age)
 				dat = "Under the current government law, the minimum gambling age is
