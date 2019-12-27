@@ -191,6 +191,7 @@ var/list/obj/machinery/newscaster/allCasters = list() //Global list that will co
 	anchored = 1
 	var/obj/machinery/exonet_node/node = null
 	circuit = /obj/item/weapon/circuitboard/newscaster
+	var/unique_id_card
 
 /obj/machinery/newscaster/security_unit                   //Security unit
 	name = "Security Newscaster"
@@ -336,7 +337,15 @@ var/list/obj/machinery/newscaster/allCasters = list() //Global list that will co
 				dat+="<B>Message Author:</B> <FONT COLOR='green'>[scanned_user]</FONT><BR>"
 				dat+="<B><A href='?src=\ref[src];set_new_title=1'>Article Title</A>:</B> [title] <BR>"
 				dat+="<B><A href='?src=\ref[src];set_new_message=1'>Article Body</A>:</B> [msg] <BR>"
-				dat+="<B><A href='?src=\ref[src];set_attachment=1'>Attach Photo</A>:</B>  [(photo_data ? "Photo Attached" : "No Photo")]</BR>"
+				dat+="<B>Photo</B>: "
+
+				if(photo_data && photo_data.photo)
+					send_rsc(usr, photo_data.photo.img, "tmp_photo.png")
+					dat+="<BR><img src='tmp_photo.png' width = '180'>"
+					dat+="<BR><B><A href='?src=\ref[src];set_attachment=1'>Delete Photo</A></B></BR>"
+				else
+					dat+="<A href='?src=\ref[src];set_attachment=1'>Attach Photo</A>"
+
 				dat+="<BR><A href='?src=\ref[src];submit_new_message=1'>Submit</A><BR><BR><A href='?src=\ref[src];setScreen=[0]'>Cancel</A><BR>"
 			if(4)
 				dat+="Feed story successfully submitted to [channel_name].<BR><BR>"
@@ -347,13 +356,13 @@ var/list/obj/machinery/newscaster/allCasters = list() //Global list that will co
 			if(6)
 				dat+="<B><FONT COLOR='maroon'>ERROR: Could not submit Feed story to Network.</B></FONT><HR><BR>"
 				if(channel_name=="")
-					dat+="<FONT COLOR='maroon'>•Invalid receiving channel name.</FONT><BR>"
+					dat+="<FONT COLOR='maroon'>Â•Invalid receiving channel name.</FONT><BR>"
 				if(scanned_user=="Unknown")
-					dat+="<FONT COLOR='maroon'>•Channel author unverified.</FONT><BR>"
+					dat+="<FONT COLOR='maroon'>Â•Channel author unverified.</FONT><BR>"
 				if(msg == "" || msg == "\[REDACTED\]")
-					dat+="<FONT COLOR='maroon'>•Invalid message body.</FONT><BR>"
+					dat+="<FONT COLOR='maroon'>Â•Invalid message body.</FONT><BR>"
 				if(title == "")
-					dat+="<FONT COLOR='maroon'>•Invalid title.</FONT><BR>"
+					dat+="<FONT COLOR='maroon'>Â•Invalid title.</FONT><BR>"
 				dat+="<BR><A href='?src=\ref[src];setScreen=[3]'>Return</A><BR>"
 			if(7)
 				dat+="<B><FONT COLOR='maroon'>ERROR: Could not submit Feed Channel to Network.</B></FONT><HR><BR>"
@@ -364,18 +373,18 @@ var/list/obj/machinery/newscaster/allCasters = list() //Global list that will co
 					else
 						existing_authors += FC.author
 				if(scanned_user in existing_authors)
-					dat+="<FONT COLOR='maroon'>•There already exists a Feed channel under your name.</FONT><BR>"
+					dat+="<FONT COLOR='maroon'>Â•There already exists a Feed channel under your name.</FONT><BR>"
 				if(channel_name=="" || channel_name == "\[REDACTED\]")
-					dat+="<FONT COLOR='maroon'>•Invalid channel name.</FONT><BR>"
+					dat+="<FONT COLOR='maroon'>Â•Invalid channel name.</FONT><BR>"
 				var/check = 0
 				for(var/datum/feed_channel/FC in news_network.network_channels)
 					if(FC.channel_name == channel_name)
 						check = 1
 						break
 				if(check)
-					dat+="<FONT COLOR='maroon'>•Channel name already in use.</FONT><BR>"
+					dat+="<FONT COLOR='maroon'>Â•Channel name already in use.</FONT><BR>"
 				if(scanned_user=="Unknown")
-					dat+="<FONT COLOR='maroon'>•Channel author unverified.</FONT><BR>"
+					dat+="<FONT COLOR='maroon'>Â•Channel author unverified.</FONT><BR>"
 				dat+="<BR><A href='?src=\ref[src];setScreen=[2]'>Return</A><BR>"
 			if(8)
 				var/total_num=length(news_network.network_channels)
@@ -494,7 +503,17 @@ var/list/obj/machinery/newscaster/allCasters = list() //Global list that will co
 				dat+="<HR>"
 				dat+="<A href='?src=\ref[src];set_wanted_name=1'>Criminal Name</A>: [channel_name] <BR>"
 				dat+="<A href='?src=\ref[src];set_wanted_desc=1'>Description</A>: [msg] <BR>"
-				dat+="<A href='?src=\ref[src];set_attachment=1'>Attach Photo</A>: [(photo_data ? "Photo Attached" : "No Photo")]</BR>"
+
+
+				dat+="<B>Photo</B>: "
+				if(photo_data && photo_data.photo)
+					send_rsc(usr, photo_data.photo.img, "tmp_photo.png")
+					dat+="<BR><img src='tmp_photo.png' width = '180'>"
+					dat+="<BR><B><A href='?src=\ref[src];set_attachment=1'>Delete Photo</A></B></BR>"
+				else
+					dat+="<A href='?src=\ref[src];set_attachment=1'>Attach Photo</A><BR>"
+
+
 				if(wanted_already)
 					dat+="<B>Wanted Issue created by:</B><FONT COLOR='green'> [news_network.wanted_issue.backup_author]</FONT><BR>"
 				else
@@ -509,11 +528,11 @@ var/list/obj/machinery/newscaster/allCasters = list() //Global list that will co
 			if(16)
 				dat+="<B><FONT COLOR='maroon'>ERROR: Wanted Issue rejected by Network.</B></FONT><HR><BR>"
 				if(channel_name=="" || channel_name == "\[REDACTED\]")
-					dat+="<FONT COLOR='maroon'>•Invalid name for person wanted.</FONT><BR>"
+					dat+="<FONT COLOR='maroon'>Â•Invalid name for person wanted.</FONT><BR>"
 				if(scanned_user=="Unknown")
-					dat+="<FONT COLOR='maroon'>•Issue author unverified.</FONT><BR>"
+					dat+="<FONT COLOR='maroon'>Â•Issue author unverified.</FONT><BR>"
 				if(msg == "" || msg == "\[REDACTED\]")
-					dat+="<FONT COLOR='maroon'>•Invalid description.</FONT><BR>"
+					dat+="<FONT COLOR='maroon'>Â•Invalid description.</FONT><BR>"
 				dat+="<BR><A href='?src=\ref[src];setScreen=[0]'>Return</A><BR>"
 			if(17)
 				dat+="<B>Wanted Issue successfully deleted from Circulation</B><BR>"
@@ -589,6 +608,8 @@ var/list/obj/machinery/newscaster/allCasters = list() //Global list that will co
 			var/list/available_channels = list()
 			for(var/datum/feed_channel/F in news_network.network_channels)
 				if(check_rights(R_ADMIN, 0, usr))
+					available_channels += F.channel_name
+				else if(unique_id_card && unique_id_card in news_data.news_edit_list())
 					available_channels += F.channel_name
 				else
 					if((!F.locked || F.author == scanned_user) && !F.censored)
@@ -694,7 +715,6 @@ var/list/obj/machinery/newscaster/allCasters = list() //Global list that will co
 
 						screen = 19
 
-						photo_data = null
 
 			updateUsrDialog()
 
@@ -786,6 +806,9 @@ var/list/obj/machinery/newscaster/allCasters = list() //Global list that will co
 				c_locked=0;
 				channel_name="";
 				viewing_channel = null
+				if (photo_data)
+					qdel(photo_data)
+					photo_data = null
 			updateUsrDialog()
 
 		else if(href_list["show_channel"])
@@ -823,11 +846,9 @@ var/list/obj/machinery/newscaster/allCasters = list() //Global list that will co
 
 /obj/machinery/newscaster/proc/AttachPhoto(mob/user as mob)
 	if(photo_data)
-		if(!photo_data.is_synth)
-			photo_data.photo.loc = src.loc
-			if(!issilicon(user))
-				user.put_in_inactive_hand(photo_data.photo)
 		qdel(photo_data)
+		photo_data = null
+		return
 
 	if(istype(user.get_active_hand(), /obj/item/weapon/photo))
 		var/obj/item/photo = user.get_active_hand()
@@ -852,6 +873,7 @@ var/list/obj/machinery/newscaster/allCasters = list() //Global list that will co
 		var/obj/item/weapon/card/id/I = human_user.GetIdCard()
 		if(I)
 			scanned_user = GetNameAndAssignmentFromId(I)
+			unique_id_card = I.unique_ID
 		else
 			scanned_user = "Unknown"
 	else

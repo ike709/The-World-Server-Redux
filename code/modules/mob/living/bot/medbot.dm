@@ -20,7 +20,7 @@
 	var/treatment_oxy = "tricordrazine"
 	var/treatment_fire = "tricordrazine"
 	var/treatment_tox = "tricordrazine"
-	var/treatment_virus = "spaceacillin"
+	var/treatment_virus = "penicillin"
 	var/treatment_emag = "toxin"
 	var/declare_treatment = 0 //When attempting to treat a patient, should it notify everyone wearing medhuds?
 
@@ -277,6 +277,9 @@
 
 /mob/living/bot/medbot/confirmTarget(var/mob/living/carbon/human/H)
 	if(!..())
+		return 0
+
+	if(H.isSynthetic()) // Don't treat FBPs
 		return 0
 
 	if(H.stat == DEAD) // He's dead, Jim

@@ -405,10 +405,10 @@
 	catalysts = list("phoron" = 5)
 	result_amount = 2
 
-/datum/chemical_reaction/spaceacillin
-	name = "Spaceacillin"
-	id = "spaceacillin"
-	result = "spaceacillin"
+/datum/chemical_reaction/penicillin
+	name = "penicillin"
+	id = "penicillin"
+	result = "penicillin"
 	required_reagents = list("cryptobiolin" = 1, "inaprovaline" = 1)
 	result_amount = 2
 
@@ -416,7 +416,7 @@
 	name = "Corophizine"
 	id = "corophizine"
 	result = "corophizine"
-	required_reagents = list("spaceacillin" = 1, "carbon" = 1, "phoron" = 0.1)
+	required_reagents = list("penicillin" = 1, "carbon" = 1, "phoron" = 0.1)
 	catalysts = list("phoron" = 5)
 	result_amount = 2
 
@@ -2358,4 +2358,63 @@
 	id = "ecstasy"
 	result = "ecstasy"
 	required_reagents = list("mercury" = 1, "sugar" = 1, "lithium" = 1)
+	result_amount = 3
+
+///// POWEDERED DRINK RECIPES /////
+
+/datum/chemical_reaction/drinks/coffee
+	name = "Coffee"
+	id = "coffee"
+	result = "coffee"
+	required_reagents = list("water" = 5, "coffeepowder" = 1)
+	result_amount = 5
+
+/datum/chemical_reaction/drinks/tea
+	name = "Black tea"
+	id = "tea"
+	result = "tea"
+	required_reagents = list("water" = 5, "teapowder" = 1)
+	result_amount = 5
+
+/datum/chemical_reaction/drinks/grapejuice
+	name = "Grape Juice"
+	id = "grapejuice"
+	result = "grapejuice"
+	required_reagents = list("water" = 3, "instantgrape" = 1)
+	result_amount = 3
+
+/datum/chemical_reaction/drinks/orangejuice
+	name = "Orange Juice"
+	id = "orangejuice"
+	result = "orangejuice"
+	required_reagents = list("water" = 3, "instantorange" = 1)
+	result_amount = 3
+
+/datum/chemical_reaction/drinks/watermelonjuice
+	name = "Watermelon Juice"
+	id = "watermelonjuice"
+	result = "watermelonjuice"
+	required_reagents = list("water" = 3, "instantwatermelon" = 1)
+	result_amount = 3
+
+/datum/chemical_reaction/drinks/applejuice
+	name = "Apple Juice"
+	id = "applejuice"
+	result = "applejuice"
+	required_reagents = list("water" = 3, "instantapple" = 1)
+	result_amount = 3
+
+/datum/chemical_reaction/food/mayonnaise
+	name = "mayonnaise"
+	id = "mayo"
+	result = "mayo"
+	required_reagents = list("egg" = 9, "cornoil" = 5, "lemonjuice" = 5, "sodiumchloride" = 1)
+	result_amount = 15
+
+/datum/chemical_reaction/food/peanutbutter
+	name = "Peanut Butter"
+	id = "peanutbutter"
+	result = "peanutbutter"
+	required_reagents = list("peanutoil" = 2, "sugar" = 1, "sodiumchloride" = 1)
+	catalysts = list("enzyme" = 5)
 	result_amount = 3

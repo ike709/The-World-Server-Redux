@@ -58,7 +58,7 @@
 
 
 	if(H.client)
-		switch(H.client.prefs.economic_status)
+		switch(H.client.prefs.social_class)
 			if(CLASS_UPPER)
 				if(!H.mind.prefs.played)
 					income = 10000
@@ -79,7 +79,7 @@
 	var/already_joined
 
 	for(var/datum/money_account/A in all_money_accounts)
-		if(A.account_number == H.mind.prefs.bank_no)
+		if(A.account_number == H.mind.prefs.bank_account)
 			M = A
 			already_joined = 1
 			break
@@ -90,15 +90,18 @@
 	if(H.mind.prefs.bank_pin)
 		H.mind.prefs.bank_pin = M.remote_access_pin
 
-	if(H.mind.prefs.bank_no)
-		H.mind.prefs.bank_no = M.account_number
+	if(H.mind.prefs.bank_account)
+		M.account_number = H.mind.prefs.bank_account
+
+	if(H.mind.prefs.expenses)
+		H.mind.prefs.expenses = M.expenses
 
 	if(!H.mind.prefs.played)
 		M.money += income
 
 	if(H.mind)
 		var/remembered_info = ""
-		remembered_info += "<b>Your account number is:</b> #[M.account_number]<br>"
+		remembered_info += "<b>Your account ID is:</b> #[M.account_number]<br>"
 		remembered_info += "<b>Your account pin is:</b> [M.remote_access_pin]<br>"
 		remembered_info += "<b>Your account funds are:</b> $[M.money]<br>"
 		if(!already_joined)

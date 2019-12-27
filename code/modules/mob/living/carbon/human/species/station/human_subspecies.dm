@@ -48,9 +48,13 @@
 		O_HEART =    /obj/item/organ/internal/heart,
 		O_LUNGS =    /obj/item/organ/internal/lungs,
 		O_LIVER =    /obj/item/organ/internal/liver,
+		O_VOICE =    /obj/item/organ/internal/voicebox,
 		O_KIDNEYS =  /obj/item/organ/internal/kidneys,
 		O_BRAIN =    /obj/item/organ/internal/brain,
-		O_EYES =     /obj/item/organ/internal/eyes
+		O_SPLEEN =   /obj/item/organ/internal/spleen/minor,
+		O_EYES =     /obj/item/organ/internal/eyes,
+		O_STOMACH =	 /obj/item/organ/internal/stomach,
+		O_INTESTINE =/obj/item/organ/internal/intestine
 		)
 
 /*
@@ -67,7 +71,7 @@
 	name = "Human Adolescent"
 	name_plural = "Humans Adolescents"
 	name = SPECIES_HUMAN_TEEN
-//	spawn_flags = SPECIES_IS_WHITELISTED
+	spawn_flags = SPECIES_IS_WHITELISTED | SPECIES_CAN_JOIN
 	blurb = "A young human which is currently too young to participate in civil powers such as voting or official positions but can legally work in many fields on a reduced wage."
 	metabolic_rate = 1.15 // You know, puberty. Hormones. Growing.
 	blood_volume = 480
@@ -77,8 +81,9 @@
 	total_health = 85
 	additional_wage = 20
 	icon_scale = 0.9
+	icon_width = 1
 	brute_mod = 0.5
-	male_scream_sound		= 'sound/voice/human/boy_scream.ogg'
+	male_scream_sound	= 'sound/voice/human/boy_scream.ogg'
 	female_scream_sound	= 'sound/voice/human/girl_scream.ogg'
 
 
@@ -109,6 +114,7 @@
 	brute_mod = 0.2
 	additional_wage = 10
 	icon_scale = 0.75
+	icon_width = 0.75
 	male_scream_sound		= 'sound/voice/human/boy_scream.ogg'
 	female_scream_sound	= 'sound/voice/human/girl_scream.ogg'
 	can_drive = 0

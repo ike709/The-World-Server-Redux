@@ -288,7 +288,7 @@
 				if(prob(1))
 					src << "<span class='warning'>You feel strange!</span>"
 					adjustCloneLoss(5 * RADIATION_SPEED_COEFFICIENT)
-					emote("gasp")
+					emote("airgasp")
 
 		if (radiation > 150)
 			damage = 6
@@ -435,7 +435,7 @@
 	// Not enough to breathe
 	if(inhale_pp < safe_pressure_min)
 		if(prob(20))
-			spawn(0) emote("gasp")
+			spawn(0) emote("airgasp")
 
 		var/ratio = inhale_pp/safe_pressure_min
 		// Don't fuck them up too fast (space only does HUMAN_MAX_OXYLOSS after all!)
@@ -1272,7 +1272,7 @@
 				if(150 to 250)					nutrition_icon.icon_state = "nutrition3"
 				if(50 to 150)					nutrition_icon.icon_state = "nutrition4"
 				else						nutrition_icon.icon_state = "nutrition5"
-		if(!isSynthetic())		
+		if(!isSynthetic())
 			if(hydration_icon)
 				switch(hydration)
 					if(450 to INFINITY)				hydration_icon.icon_state = "thirst0"
@@ -1589,12 +1589,18 @@
 /mob/living/carbon/human/proc/handle_nourishment()
 	if (nutrition <= 0)
 		if (prob(1.5))
-			src << span("warning", "Your hunger pangs are excruciating as the stomach acid sears in your stomach... you feel weak.")
+			if(!isSynthetic())
+				to_chat(src, span("warning", "Your hunger pangs are excruciating as the stomach acid sears in your stomach... you feel weak."))
+			else
+				to_chat(src, span("warning", "Your internal battery makes a silent beep. It is time to recharge."))
+				
 		return
 
 	if (hydration <= 0)
 		if (prob(1.5))
-			src << span("warning", "You feel dizzy and disorientated as your lack of hydration becomes impossible to ignore.")
+			if(!isSynthetic())
+				to_chat(src, span("warning", "You feel dizzy and disorientated as your lack of hydration becomes impossible to ignore."))
+				
 		return
 
 

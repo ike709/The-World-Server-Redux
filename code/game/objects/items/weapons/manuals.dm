@@ -821,20 +821,8 @@
 	author = "NanoTrasen"
 	title = "Pollux Law"
 
-/obj/item/weapon/book/manual/security_space_law/New()
-	..()
-	dat = {"
-
-		<html><head>
-		</head>
-
-		<body>
-		<iframe width='100%' height='97%' src="[config.wikiurl]index.php?title=Pollux_Law&printable=yes&remove_links=1" frameborder="0" id="main_frame"></iframe>
-		</body>
-
-		</html>
-
-		"}
+/obj/item/weapon/book/manual/security_space_law/attack_self(mob/user)
+	user.client.view_laws()
 
 /obj/item/weapon/book/manual/sop
 	name = "Policing: Standard Operating Procedure"
@@ -851,7 +839,7 @@
 		</head>
 
 		<body>
-		<iframe width='100%' height='97%' src="[config.wikiurl]index.php?title=Guide_to_Policing&printable=yes&remove_links=1" frameborder="0" id="main_frame"></iframe>
+		<iframe width='100%' height='97%' src="[config.wikiurl]doku.php?id=guide_to_policing" frameborder="0" id="main_frame"></iframe>
 		</body>
 
 		</html>

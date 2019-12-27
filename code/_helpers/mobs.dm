@@ -116,7 +116,7 @@ proc/skintone2racedescription(tone)
 	switch (tone)
 		if(30 to INFINITY)		return "albino"
 		if(20 to 30)			return "pale"
-		if(5 to 15)				return "light skinned"
+		if(5 to 15)			return "light skinned"
 		if(-10 to 5)			return "white"
 		if(-25 to -10)			return "tan"
 		if(-45 to -25)			return "darker skinned"
@@ -173,7 +173,7 @@ Proc for attack log creation, because really why not
 
 	//Log the message to file
 	if(ishuman(user))
-		round_text_log += "<b>([time_stamp()])</b>  <span style=\"color:red\"><u><b>ATTACK LOG:</b></u> (<b>[user]/[user.client]</b>) vs [target_str]: [what_done]</span>"
+		GLOB.round_text_log += "<b>([time_stamp()])</b>  <span style=\"color:red\"><u><b>ATTACK LOG:</b></u> (<b>[user]/[user.client]</b>) vs [target_str]: [what_done]</span>"
 
 	if(admin_notify)
 		msg_admin_attack("[key_name_admin(user)] vs [target_str]: [what_done]")
@@ -438,13 +438,3 @@ proc/random_eye_color()
 
 	return eye_color
 
-
-/proc/get_tax_rate(var/class)
-
-	switch(class)
-		if(CLASS_UPPER)
-			return tax_rate_upper * 100
-		if(CLASS_MIDDLE)
-			return tax_rate_middle * 100
-		if(CLASS_WORKING)
-			return tax_rate_lower * 100

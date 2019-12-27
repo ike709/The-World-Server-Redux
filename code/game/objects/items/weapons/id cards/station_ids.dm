@@ -30,8 +30,8 @@
 	var/rank = null			//actual job
 	var/dorm = 0			// determines if this ID has claimed a dorm already
 
-	var/email				// associated email
 	var/unique_ID			// character's unique ID
+	var/list/associated_email_login = list("login" = "", "password" = "")
 
 /obj/item/weapon/card/id/examine(mob/user)
 	set src in oview(1)
@@ -76,10 +76,15 @@
 
 /mob/living/carbon/human/set_id_info(var/obj/item/weapon/card/id/id_card)
 	..()
+	if(!id_card)
+		return 0
+
 	id_card.age = age
 	if(mind)
-		id_card.email = mind.initial_email
+		id_card.associated_email_login = list("login" = "[mind.prefs.email]", "password" = "[get_persistent_email_password(mind.prefs.email)]")
 		id_card.unique_ID = mind.prefs.unique_id
+
+	return 1
 
 /obj/item/weapon/card/id/proc/dat()
 	var/dat = ("<table><tr><td>")
@@ -468,10 +473,10 @@
 	rank = "Sanitation Technician"
 	job_access_type = /datum/job/janitor
 
-/obj/item/weapon/card/id/civilian/librarian
-	assignment = "Librarian"
-	rank = "Librarian"
-	job_access_type = /datum/job/librarian
+/obj/item/weapon/card/id/civilian/journalist
+	assignment = "Journalist"
+	rank = "Journalist"
+	job_access_type = /datum/job/journalist
 
 /obj/item/weapon/card/id/civilian/head //This is not the HoP. There's no position that uses this right now.
 	name = "identification card"

@@ -353,7 +353,7 @@
 			return
 
 		var/UID = I.unique_ID
-		var/email = I.email
+		var/email = get_email(I.associated_email_login["login"])
 		var/reg_name = I.registered_name
 
 

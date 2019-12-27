@@ -27,6 +27,7 @@ var/diary				= null
 var/error_log			= null
 var/debug_log			= null
 var/href_logfile		= null
+var/vote_log			= null
 // var/station_name		= "Northern Star"
 // var/const/station_orig	= "Northern Star" //station_name can't be const due to event prefix/suffix
 // var/const/station_short	= "Northern Star"
@@ -42,7 +43,7 @@ var/changelog_hash		= ""
 var/game_year			= (text2num(time2text(world.realtime, "YYYY")) + 244)
 var/round_progressing = 1
 
-var/master_mode       = "extended" // "extended"
+var/master_mode       = "canon" // "canon" aka spicier extended
 var/secret_force_mode = "secret"   // if this is anything but "secret", the secret rotation will forceably choose this mode.
 
 var/host = null //only here until check @ code\modules\ghosttrap\trap.dm:112 is fixed
@@ -66,6 +67,7 @@ var/list/latejoin_gateway  = list()
 var/list/latejoin_elevator = list()
 var/list/latejoin_cryo     = list()
 var/list/latejoin_cyborg   = list()
+var/list/latejoin_prison   = list()
 
 var/list/prisonwarp         = list() // Prisoners go to these
 var/list/holdingfacility    = list() // Captured people go here
