@@ -22,16 +22,9 @@
 	//CATEGORY
 
 	for(var/C in available_categories)
-		var/list/c_posts
-
-		for(var/list/datum/forum_thread/T in threads)
-			if(T.category == C)
-				c_posts += T
-
-		content += "<table cellpadding=\"5\" style=\"height: 32px; width: 100%; background-color: grey; color: white; border-style: solid; \
-		margin-left: auto; margin-right: auto;\" cellspacing=\"5\"><tbody> \
-		<tr style=\"height: 32px;\"><td style=\"height: 32px;\">[C]</td> \
-		</tr></tbody></table>"
+		for(var/datum/forum/F in get_forums_by_cat(C))
+			content += "[F.title]<br>"
+			content += "[F.desc]"
 
 
 

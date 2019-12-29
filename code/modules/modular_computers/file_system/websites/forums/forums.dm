@@ -1,12 +1,12 @@
 /datum/website/forums
 	title = "Unnamed Forum"
 
-	var/list/datum/forum_member/members
-	var/list/datum/forum_thread/threads
-	var/list/banned_members
-	var/list/admins
+	var/list/datum/forum_member/members = list()
+	var/list/datum/forum/forums = list()
+	var/list/banned_members = list()
+	var/list/admins = list()
 
-	var/audit_log
+	var/list/audit_log = list()
 
 	var/list/available_categories = list("General", "Admin Only")
 	var/list/admin_only_categories = list("Admin Only")
@@ -16,7 +16,6 @@
 	var/forum_description = "This is a generic forum."
 	var/open_registration = TRUE				// This forum open to registration?
 
-	interactive_website = "forum"
 
 
 /datum/forum_member
@@ -46,33 +45,33 @@
 
 	var/title
 	var/list/datum/forum_post/posts
-	var/author								// The OP
-	var/locked = FALSE						// Admins can lock threads
+	var/author							// The OP
+	var/locked = FALSE						// Admins can lock threads, if this is TRUE, the thread is locked.
+
+
+/datum/forum
+	var/id
+	var/list/datum/forum_thread/threads = list()
+	var/title = "Unnamed Forum"
+	var/desc = "No description provided."
 	var/category = "General"
 	var/datum/website/forums/host_forum
 
-/datum/website/forums/proc/register_new_member(username, password, email, uid, member_ckey)
+
+/datum/website/forums/proc/register_new_member(username, password, email, member_ckey)
 	var/datum/forum_member/M = new()
 	M.username = username
 	M.password = password
 	M.email = email
-	M.uid = uid
+	M.uid = generate_gameid()
 	M.member_ckey = member_ckey
-
-
 
 	return M
 
 // Forum Audit Log (Persistent log that shows all actions on a forum.
-/datum/website/forums/proc/add_audit_log(msg)
-	msg = copytext(msg, 1, MAX_MESSAGE_LEN)
+/datum/website/forums/proc/add_audit_log(msg, admin)
+	audit_log += "<b>[admin]</b> [msg] - [stationtime2text()]"
 
-	msg = sanitize(msg)
-
-	if (length(msg) == 0)
-		audit_log += msg
-	else
-		audit_log += "<BR>[msg]"
 // Forum Procs
 
 /datum/website/forums/proc/make_category(category, datum/forum_member/admin)		// returns the full audit log all of moderation actions happening
@@ -80,7 +79,7 @@
 		return 0
 
 	if(admin)
-		add_audit_log("<b>[admin]</b> made a new category <b>\"[category]\"</b> - [stationtime2text()]")
+		add_audit_log("made a new category - <b>[category]</b>", admin)
 
 	available_categories += category
 
@@ -89,66 +88,70 @@
 
 /datum/website/forums/proc/remove_category(category, datum/forum_member/admin)		// returns the full audit log all of moderation actions happening
 	if(admin)
-		add_audit_log("<b>[admin]</b> removed category <b>\"[category]\"</b> - [stationtime2text()]")
+		add_audit_log("removed category <b>\"[category]\"</b>", admin)
 
 	available_categories -= category
 	admin_only_categories -= category
+
+	return 1
 
 /datum/website/forums/proc/edit_category(category, new_category, datum/forum_member/admin)		// returns the full audit log all of moderation actions happening
 	if(admin)
-		add_audit_log("<b>[admin]</b> edited category <b>\"[new_category]\"</b> - [stationtime2text()]")
+		add_audit_log("edited category <b>\"[new_category]\"</b>", admin)
 
-	for(var/datum/forum_post/P in get_posts())
-		if(category == P.host_thread.category)
-			P.host_thread.category = new_category
+	if(category in available_categories)
+		available_categories -= category
+		available_categories += new_category
 
-	available_categories -= category
-	admin_only_categories -= category
+	if(category in admin_only_categories)
+		admin_only_categories -= category
+		admin_only_categories += new_category
 
-	available_categories += new_category
-	admin_only_categories += new_category
 
 //counters
 /datum/website/forums/proc/get_audit_log()		// returns the full audit log all of moderation actions happening
-	if(!audit_log)
-		return "No logs found."
+	if(!audit_log.len)
+		return 0
 	return audit_log
 
 /datum/website/forums/proc/member_count()		// returns how many members
-	if(!members)
-		return 0
 	return members.len
 
 /datum/website/forums/proc/admins_count()		// returns how many admins
-	if(!admins)
-		return 0
 	return admins.len
 
 /datum/website/forums/proc/thread_count()		// returns how many threads in the entire forum
-	if(!threads)
-		return 0
-	return threads.len
+	return get_threads().len
 
-/datum/website/forums/proc/get_posts()
+/datum/website/forums/proc/get_posts()			// returns actual posts
 	var/all_posts
-	for(var/datum/forum_thread/T in threads)
-		all_posts += T.posts
+	for(var/datum/forum_post/F in get_threads())
+		all_posts += F
+
 
 	return all_posts
 
 
-/datum/website/forums/proc/get_threads_by_cat(category)
-	var/tally_posts
-	for(var/datum/forum_thread/T in get_posts())
-		if(T.category == category)
-			tally_posts += T
+/datum/website/forums/proc/get_threads()			// returns actual posts
+	var/list/all_threads = list()
+	for(var/datum/forum_thread/F in forums.threads)
+		all_threads += F
 
-	return tally_posts
+	return all_threads
+
+
+/datum/website/forums/proc/get_forums_by_cat(category)
+	var/list/tally_forums = list()
+	for(var/datum/forum/F in get_posts())
+		if(F.category == category)
+			tally_forums += F
+
+	return tally_forums
 
 
 
 /datum/website/forums/proc/get_cat_thread_count(category)
-	var/list/total_threads = get_threads_by_cat(category)
+	var/list/total_threads = get_forums_by_cat(category)
 	return total_threads.len
 
 
@@ -161,32 +164,32 @@
 
 /datum/website/forums/proc/ban_member(datum/forum_member/M, datum/forum_member/admin)
 	if(M)
-		add_audit_log("<b>[M.username]</b> was banned from [title] by [admin] - [stationtime2text()]")
+		add_audit_log("banned <b>[M.username]</b> was banned from [title]", admin)
 
 	M.banned = TRUE
 	return 1
 
 /datum/website/forums/proc/unban_member(datum/forum_member/M, datum/forum_member/admin)
 	if(M)
-		add_audit_log("<b>[M.username]</b> was unbanned from [title] by [admin] - [stationtime2text()]")
+		add_audit_log("unbanned <b>[M.username]</b> from [title]", admin)
 	M.banned = FALSE
 	return 1
 
 /datum/website/forums/proc/delete_member(datum/forum_member/M, datum/forum_member/admin)
 	if(M)
-		add_audit_log("<b>[M.username]</b> account deleted by [admin] - [stationtime2text()]")
+		add_audit_log("deleted account: <b>[M.username]</b>", admin)
 	if(qdel(M))
 		return 1
 
 /datum/website/forums/proc/make_admin(datum/forum_member/M, datum/forum_member/admin)
 	if(M)
-		add_audit_log("<b>[M.username]</b> was made an admin by [admin] - [stationtime2text()]")
+		add_audit_log("made <b>[M.username]</b> an admin", admin)
 	admins += M
 	return 1
 
 /datum/website/forums/proc/remove_admin(datum/forum_member/M, datum/forum_member/admin)
 	if(M)
-		add_audit_log("<b>[M.username]</b> was removed from admin by [admin] - [stationtime2text()]")
+		add_audit_log("removed <b>[M.username]</b> from admin", admin)
 	admins -= M
 	return 1
 
@@ -197,6 +200,8 @@
 			postcount++
 
 	return postcount
+
+/*
 
 //Thread related procs
 
@@ -224,15 +229,18 @@
 	P.host_thread = T
 
 	if(M)
-		add_audit_log("<b>[M.username]</b> created the thread <b>\"[T.title]\"</b> - [stationtime2text()]")
+		add_audit_log("created the thread <b>\"[T.title]\"</b>", admin)
 
 
 /datum/forum_thread/proc/get_posts()
 	return posts
 
+/datum/forum_thread/proc/get_forums()
+	return forums
+
 /datum/website/forums/proc/delete_thread(datum/forum_thread/T, datum/forum_member/M)
 	if(M)
-		add_audit_log("<b>[M.username]</b> deleted the thread <b>\"[T.title]\"</b> - [stationtime2text()]")
+		add_audit_log("deleted the thread <b>\"[T.title]\"</b>", admin)
 
 	qdel(T.get_posts())
 	qdel(T)
@@ -241,7 +249,7 @@
 
 /datum/website/forums/proc/move_thread(datum/forum_thread/T, new_category, datum/forum_member/admin)
 	if(admin)
-		add_audit_log("<b>[admin.username]</b> moved the thread <b>\"[T.title]\"</b> from [T.category] to [new_category] - [stationtime2text()]")
+		add_audit_log("moved the thread <b>\"[T.title]\"</b> from [T.category] to [new_category]", admin)
 
 	T.category = new_category
 
@@ -249,7 +257,7 @@
 
 /datum/website/forums/proc/lock_thread(datum/forum_thread/T, datum/forum_member/admin)
 	if(admin)
-		add_audit_log("<b>[admin.username]</b> locked the thread <b>\"[T.title]\"</b> - [stationtime2text()]")
+		add_audit_log("locked the thread <b>\"[T.title]\"</b> - [stationtime2text()]", admin)
 
 	T.locked = 1
 
@@ -273,14 +281,14 @@
 
 /datum/forum_thread/proc/delete_post(datum/forum_post/deleted_post, datum/forum_member/M)
 	if(M)
-		host_forum.add_audit_log("<b>[M.username]</b> deleted the post <b>\"[deleted_post.title]\"</b> - [stationtime2text()]")
+		host_forum.add_audit_log("deleted the post <b>\"[deleted_post.title]\"</b>", admin)
 
 	posts -= deleted_post
 	qdel(deleted_post)
 
 /datum/forum_thread/proc/edit_post(datum/forum_post/edited_post, new_content, datum/forum_member/M)
 	if(M)
-		host_forum.add_audit_log("<b>[M.username]</b> edited the post <b>\"[edited_post.title]\"</b> - [stationtime2text()]")
+		host_forum.add_audit_log("edited the post <b>\"[edited_post.title]\"</b>", admin)
 
 	edited_post.content = new_content
 	if(host_forum && host_forum.show_edits)
@@ -304,3 +312,5 @@
 	var/password = sanitize(input(usr, "Please enter a password.", "password", null)  as text)
 	if(!password)
 		return 0
+
+*/
