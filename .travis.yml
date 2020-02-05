@@ -1,5 +1,10 @@
-language: c
+language: generic
+dist: xenial
 sudo: false
+
+branches:
+  only:
+    - master
 
 notifications:
   webhooks:
